@@ -27,6 +27,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+AUTH_USER_MODEL = 'auth.User'
+
+LOGIN_URL = '/login/'
+
+LOGIN_REDIRECT_URL = '/profile/'
 
 # Application definition
 
@@ -55,7 +60,7 @@ ROOT_URLCONF = 'TimeClock.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(os.path.dirname(BASE_DIR), "TimeClock", "static", "templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

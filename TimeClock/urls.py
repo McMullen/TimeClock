@@ -17,7 +17,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 urlpatterns = [
-    url(r'^', include('clock.urls')),
+    url(r'^$', include('clock.urls')),
     url(r'^clock/', include('clock.urls')),
     url(r'^admin/', admin.site.urls),
 ]
