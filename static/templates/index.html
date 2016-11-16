@@ -9,7 +9,14 @@ index.html
 
  <!-- Start our code from this section in base.html -->
 {% block content %}
-<div class="container" style="test-align:center">
-	<h1>Hello!</h1>
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="jumbotron">
+  <div class="container" style="text-align:center">
+    <h1>Welcome to Time Clock!</h1>
+  </div>
+</div>
+
+<div class="call-to-action" style="text-align:center">
+    <a href="{% url 'register' %}" class="btn btn-success btn-lg">Registration</a>
 </div>
 {% endblock %} 

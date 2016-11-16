@@ -1,6 +1,12 @@
+"""
+urls.py
+
+@author Jason McMullen
+"""
 from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url(r'^$', views.index, name='index.html'),
+    url(r'^$', views.home, name="home"),
+	url(r'^register/$', views.register, name="register"),
 ]
