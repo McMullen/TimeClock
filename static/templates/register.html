@@ -30,44 +30,37 @@ register.html
                 <div class="col-md-4">
 				<div class="register_div">
                         {% if form.first_name.errors %}<p class="error">{{ form.first_name.errors }}</p>{% endif %}
-                        <p><label for="id_first_name"{% if form.first_name.errors %} class="error" {% endif %}>First Name:</label>
-                           <p>{{ form.first_name }}</p>
+                        <p><label for="id_first_name"{% if form.first_name.errors %} class="error" {% endif %}>First Name:</label> {{ form.first_name }}
                         </p>
                      </div>
                     <div class="register_div">
                         {% if form.last_name.errors %}<p class="error">{{ form.last_name.errors }}</p>{% endif %}
-                        <p><label for="id_last_name"{% if form.last_name.errors %} class="error" {% endif %}>Last Name:</label>
-                            <p>{{ form.last_name }}</p>
+                        <p><label for="id_last_name"{% if form.last_name.errors %} class="error" {% endif %}>Last Name:</label> {{ form.last_name }}
                         </p>
                     </div>
                     <div class="register_div">
                         {% if form.phone.errors %}<p class="error">{{ form.phone.errors }}</p>{% endif %}
-                        <p><label for="id_phone"{% if form.phone.errors %} class="error" {% endif %}>Phone Number:</label>
-                            <p>{{ form.phone }}</p>
+                        <p><label for="id_phone"{% if form.phone.errors %} class="error" {% endif %}>Phone Number:</label> {{ form.phone }}
                         </p>
                     </div>
                     <div class="register_div">
                         {% if form.username.errors %}<p class="error">{{ form.username.errors }}</p>{% endif %}
-                        <p><label for="id_username"{% if form.username.errors %} class="error" {% endif %}>User Name:</label>
-                            <p>{{ form.username }}</p>
+                        <p><label for="id_username"{% if form.username.errors %} class="error" {% endif %}>User Name:</label> {{ form.username }}
                         </p>
                     </div>
                     <div class="register_div">
                         {% if form.email.errors %}<p class="error">{{ form.email.errors }}</p>{% endif %}
-                        <p><label for="id_email"{% if form.email.errors %} class="error" {% endif %}>Email:</label>
-                             <p>{{ form.email }}</p>
+                        <p><label for="id_email"{% if form.email.errors %} class="error" {% endif %}>Email:</label> {{ form.email }}
                         </p>
                     </div>
                     <div class="register_div">
                         {% if form.password.errors %}<p class="error">{{ form.password.errors }}</p>{% endif %}
-                        <p><label for="id_password"{% if form.password.errors %} class="error" {% endif %}>Password:</label>
-                            <p>{{ form.password }}</p>
+                        <p><label for="id_password"{% if form.password.errors %} class="error" {% endif %}>Password:</label> {{ form.password }}
                         </p>
                     </div>
                     <div class="register_div">
                         {% if form.password1.errors %}<p class="error">{{ form.password1.errors }}</p>{% endif %}
-                        <p><label for="id_password1"{% if form.password1.errors %} class="error" {% endif %}>Password (Confirm):</label>
-                            <p>{{ form.password1 }}</p>
+                        <p><label for="id_password1"{% if form.password1.errors %} class="error" {% endif %}>Password (Confirm):</label> {{ form.password1 }}
                         </p>
                     </div>
 					<!--Submit the set of forms-->
@@ -76,7 +69,5 @@ register.html
             </div>
 					
 	</div>
-	
-  
-  
+
 {% endblock %} 

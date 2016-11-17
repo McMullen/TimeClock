@@ -16,13 +16,13 @@ from clock.forms import RegistrationForm, LoginForm
 """
 Basic home page view
 """
-def home(request):
+def Home(request):
     return render_to_response("index.html")
 
 """
 Register new users to the time clock system
 """
-def register(request):
+def Register(request):
 	
 	# If already logged in, do not let the user reregister
     if request.user.is_authenticated():
@@ -65,3 +65,47 @@ def register(request):
         form = RegistrationForm()
         context = {'form' : form}
         return render(request, 'register.html', context)
+
+"""
+Handle login requests
+"""
+def LoginRequest(request):
+
+    # Check if already logged in - if so send to profile instead of login page
+    if request.user.is_authenticated():
+        return HttpResponseRedirect('/profile/')
+
+    # If user is not logged in, gather information entered in login page
+    if request.method == 'POST':
+
+        form = LoginForm(request.POST)
+
+        # If the form is valid, gather the information on the page and process it
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+
+            # This step is logging the user in
+            user = authenticate(username=username, password=password)
+
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                else:
+                    return HttpResponseRedirect('/')
+
+                # log login activity if not superuser
+                if not user.is_superuser:
+                    newLog = ActivityLog(user=request.user.username,time_logged=datetime.now(),message=request.user.username + ' logged in')
+                    newLog.save()
+                return HttpResponseRedirect('/profile/')
+            else:
+                return render_to_response('login.html', {'form': form }, context_instance=RequestContext(request))
+
+        # Something wrong with the form, send them back to make corrections
+        else:
+            return render_to_response('login.html', {'form': form }, context_instance=RequestContext(request))
+    else:
+        form = LoginForm()
+        context = {'form': form}
+        return render(request, 'login.html', context)
