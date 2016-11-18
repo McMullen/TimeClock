@@ -12,6 +12,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import render_to_response
 from django.core.exceptions import ObjectDoesNotExist
 from clock.forms import RegistrationForm, LoginForm
+from clock.models import Employee, Punch
 
 """
 Basic home page view
@@ -34,25 +35,27 @@ def Register(request):
 
         # Pass form back through all the clean methods we had created and make new user
         if form.is_valid():
+            
             user = User.objects.create_user(username=form.cleaned_data['username'],
                                                                        email = form.cleaned_data['email'],
                                                                        password=form.cleaned_data['password'])
             user.save()
-
-            # Save all of the gathered information into a patient object
-            patient = Patient(user=user,
+            
+            # Save all of the gathered information into a employee object
+            employee = Employee(user=user,
                               first_name=form.cleaned_data['first_name'],
-                              mid_initial=form.cleaned_data['mid_initial'],
                               last_name=form.cleaned_data['last_name'],
-                              phone=form.cleaned_data['phone'],
+                              phone_number=form.cleaned_data['phone'],
+                              pay_rate=10.00,
+                              can_see_hours=False,
                              )
 
-            patient.save()
+            employee.save()
 
             # Auto sign in user
-            patient = authenticate(username=form.cleaned_data['username'],
+            employee = authenticate(username=form.cleaned_data['username'],
                                    password=form.cleaned_data['password'])
-            login(request, patient)
+            login(request, employee)
 
             # Send the user to their profile page
             return HttpResponseRedirect('/profile/')
@@ -94,18 +97,29 @@ def LoginRequest(request):
                 else:
                     return HttpResponseRedirect('/')
 
-                # log login activity if not superuser
-                if not user.is_superuser:
-                    newLog = ActivityLog(user=request.user.username,time_logged=datetime.now(),message=request.user.username + ' logged in')
-                    newLog.save()
                 return HttpResponseRedirect('/profile/')
             else:
-                return render_to_response('login.html', {'form': form }, context_instance=RequestContext(request))
+                return render(request, 'login.html', {'form': form })
 
         # Something wrong with the form, send them back to make corrections
         else:
-            return render_to_response('login.html', {'form': form }, context_instance=RequestContext(request))
+            context = {'form': form}
+            return render(request, 'login.html', context)
     else:
         form = LoginForm()
         context = {'form': form}
         return render(request, 'login.html', context)
+
+"""
+Handle navigation to the profile page after successful login
+"""
+@login_required
+def Profile(request):
+    # If user is not logged in, send them to login page
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
+
+    user = User.objects.get(id=request.user.id)
+    employee = Employee.objects.filter(user=user).get()
+    context = {'employee': employee}
+    return render(request, 'profile.html', context)
