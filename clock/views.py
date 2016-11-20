@@ -96,7 +96,7 @@ def LoginRequest(request):
                 else:
                     return HttpResponseRedirect('/')
 
-                return HttpResponseRedirect('/profile/')
+                return HttpResponseRedirect('/employee_profile/')
             else:
                 return render(request, 'login.html', {'form': form})
 
@@ -125,7 +125,13 @@ def Profile(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login/')
 
-    user = request.user
-    employee = user.employee
-    context = {'employee': employee}
-    return render(request, 'profile.html', context)
+    try:
+        user = request.user
+        employee = user.employee
+        context = {'employee': employee}
+        return render(request, 'employee_profile.html', context)
+    except ObjectDoesNotExist:
+        user = request.user
+        employer = user.employer
+        context = {'employer' : employer}
+        return render(request, 'employer_profile.html', context)
