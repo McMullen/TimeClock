@@ -11,4 +11,5 @@ urlpatterns = [
 	url(r'^register/$', views.Register, name="register"),
 	url(r'^login/$', views.LoginRequest, name="login"),
     url(r'^profile/$', views.Profile, name="profile"),
+    url(r'^logout/$', views.LogoutRequest, name="logout"),
 ]

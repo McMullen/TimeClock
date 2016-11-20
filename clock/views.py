@@ -12,7 +12,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import render_to_response
 from django.core.exceptions import ObjectDoesNotExist
 from clock.forms import RegistrationForm, LoginForm
-from clock.models import Employee, Punch
+from clock.models import Employee, Employer, Punch
 
 """
 Basic home page view
@@ -38,16 +38,15 @@ def Register(request):
             
             user = User.objects.create_user(username=form.cleaned_data['username'],
                                                                        email = form.cleaned_data['email'],
-                                                                       password=form.cleaned_data['password'])
+                                                                       password=form.cleaned_data['password'],
+                                                                       first_name=form.cleaned_data['first_name'],
+                                                                       last_name=form.cleaned_data['last_name'])
             user.save()
             
-            # Save all of the gathered information into a employee object
+            # Save all of the gathered information into a BaseUser object
             employee = Employee(user=user,
-                              first_name=form.cleaned_data['first_name'],
-                              last_name=form.cleaned_data['last_name'],
-                              phone_number=form.cleaned_data['phone'],
+                              phone=form.cleaned_data['phone'],
                               pay_rate=10.00,
-                              can_see_hours=False,
                              )
 
             employee.save()
@@ -99,7 +98,7 @@ def LoginRequest(request):
 
                 return HttpResponseRedirect('/profile/')
             else:
-                return render(request, 'login.html', {'form': form })
+                return render(request, 'login.html', {'form': form})
 
         # Something wrong with the form, send them back to make corrections
         else:
@@ -109,6 +108,13 @@ def LoginRequest(request):
         form = LoginForm()
         context = {'form': form}
         return render(request, 'login.html', context)
+        
+"""
+Handle logout requests
+"""
+def LogoutRequest(request):
+    logout(request)
+    return HttpResponseRedirect('/')
 
 """
 Handle navigation to the profile page after successful login
@@ -119,7 +125,7 @@ def Profile(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login/')
 
-    user = User.objects.get(id=request.user.id)
-    employee = Employee.objects.filter(user=user).get()
+    user = request.user
+    employee = user.employee
     context = {'employee': employee}
     return render(request, 'profile.html', context)

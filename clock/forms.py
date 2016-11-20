@@ -4,7 +4,7 @@ forms.py
 @author Jason McMullen
 """
 
-from clock.models import Employee, Punch
+from clock.models import Employee, Employer, Punch
 from django import forms
 from django.contrib.auth.models import User
 from django.forms import ModelForm
