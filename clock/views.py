@@ -11,8 +11,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import render_to_response
 from django.core.exceptions import ObjectDoesNotExist
-from clock.forms import RegistrationForm, LoginForm
+from clock.forms import RegistrationForm, LoginForm, PunchForm
 from clock.models import Employee, Employer, Punch
+from datetime import datetime, time, date
 
 """
 Basic home page view
@@ -128,6 +129,15 @@ def Profile(request):
     try:
         user = request.user
         employee = user.employee
+        
+        # If the user clicks the "Punch" button
+        if request.method == 'POST':
+            form = PunchForm(request.POST)
+            punch = Punch(employee=employee,
+                            date = datetime.now().date(),
+                            time = datetime.now().time())
+            punch.save()
+        
         context = {'employee': employee}
         return render(request, 'employee_profile.html', context)
     except ObjectDoesNotExist:

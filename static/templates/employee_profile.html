@@ -18,4 +18,17 @@ profile.html
 		<p>Phone Number: {{ employee.phone }}</p>
 	</section>
 </div>
+<div class="container">
+    <form method="POST" action="">{% csrf_token %}
+    <input type="submit" value="Punch" class="btn btn-primary">
+</div>
+<div class="container">
+    {% for punch in employee.getAllPunches %}
+        <table>
+            <tr>
+                <td>{{ punch }} </td>
+            </tr>
+        </table>
+    {% endfor %}
+</div>
 {% endblock %} 

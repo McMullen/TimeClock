@@ -48,4 +48,4 @@ class Punch(models.Model):
         # "American" date format
         formatD = "%a %b %d %Y"
 
-        return "Punch at " + " " + self.date.strftime(formatD) + " " +self.time.strftime(formatT)
+        return self.date.strftime(formatD) + " " +self.time.strftime(formatT)

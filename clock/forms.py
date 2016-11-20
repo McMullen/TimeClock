@@ -54,9 +54,12 @@ class LoginForm(forms.Form):
     password = forms.CharField(label='Password', widget=forms.PasswordInput(render_value=False))
 
 """
-Employee update profile format
+Employee punch in form
 """
-class ProfileForm(forms.Form):
+class PunchForm(forms.Form):
+
+    date = forms.DateField()
+    time = forms.TimeField()
 
     class Meta:
         model = Employee
