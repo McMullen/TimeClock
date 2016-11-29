@@ -58,7 +58,7 @@ def Register(request):
             login(request, employee)
 
             # Send the user to their profile page
-            return HttpResponseRedirect('/profile/')
+            return HttpResponseRedirect('/employee_profile/')
         else:
             # Send the form that is not valid back to register.html and display the errors to be fixed
             return render(request, 'register.html', {'form': form})
@@ -76,7 +76,7 @@ def LoginRequest(request):
 
     # Check if already logged in - if so send to profile instead of login page
     if request.user.is_authenticated():
-        return HttpResponseRedirect('/profile/')
+        return HttpResponseRedirect('/employee_profile/')
 
     # If user is not logged in, gather information entered in login page
     if request.method == 'POST':
@@ -126,22 +126,35 @@ def Profile(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login/')
 
+    user = request.user
     try:
-        user = request.user
         employee = user.employee
-        
-        # If the user clicks the "Punch" button
-        if request.method == 'POST':
-            form = PunchForm(request.POST)
-            punch = Punch(employee=employee,
-                            date = datetime.now().date(),
-                            time = datetime.now().time())
-            punch.save()
-        
         context = {'employee': employee}
         return render(request, 'employee_profile.html', context)
     except ObjectDoesNotExist:
-        user = request.user
         employer = user.employer
         context = {'employer' : employer}
         return render(request, 'employer_profile.html', context)
+
+"""
+Handle employees punching in and out
+"""
+@login_required
+def PunchRequest(request):
+    user = request.user
+    employee = user.employee
+
+    form = PunchForm(request.POST)
+    date = datetime.now().date()
+    time = datetime.now().time()
+    
+    #location = 'OF'
+    location = forms.ChoiceField(choices=Punch.LOCATION_CHOICES, widget=forms.RadioSelect())
+    punch = Punch(employee=employee,
+                    date = date,
+                    time = time,
+                    location = location,
+                   )
+    punch.save()
+    context = {'employee': employee}
+    return HttpResponseRedirect('/employee_profile/')

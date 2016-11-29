@@ -60,7 +60,7 @@ class PunchForm(forms.Form):
 
     date = forms.DateField()
     time = forms.TimeField()
-
-    class Meta:
-        model = Employee
-        exclude = ('user',)
+    location = forms.ChoiceField(
+        widget=forms.RadioSelect(),
+        choices=Punch.LOCATION_CHOICES,
+    )

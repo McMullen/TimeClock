@@ -21,10 +21,20 @@ class Employee(models.Model):
     def getAllPunches(self):
         all_punches = Punch.objects.filter(employee=self)
         return all_punches
-    
-    def __str__(self):
-        return "Name: " + self.fist_name + " " + self.last_name
+        
+    def numOfPunches(self):
+        total = Punch.objects.filter(employee=self).count()
+        return total
 
+    def isEvenNumPunches(self):
+        total = Punch.objects.filter(employee=self).count()
+        if total == 0:
+            return True
+        elif total % 2 == 0:
+            return True
+        else:
+            return False
+        
 # An extension of the BaseUser class
 class Employer(models.Model):
     
@@ -36,10 +46,25 @@ class Employer(models.Model):
 # Logic to handle all punch ins/outs. For now, accept all punch requests
 class Punch(models.Model):
 
+    MEDICAL = 'MB'
+    OFFICE = 'OF'
+    TOWN = 'TN'
+
+    LOCATION_CHOICES=(
+        (MEDICAL, 'Medical Building'),
+        (OFFICE, 'Office'),
+        (TOWN, 'Town Houses'),
+    )
+
+    employee = models.ForeignKey('Employee')
     date = models.DateField()
     time = models.TimeField()
-    employee = models.ForeignKey('Employee')
-
+    location = models.CharField(
+        max_length=2,
+        choices=LOCATION_CHOICES,
+        default = OFFICE,
+    )
+    
     def __str__(self):
 
         # Format for time
@@ -48,4 +73,4 @@ class Punch(models.Model):
         # "American" date format
         formatD = "%a %b %d %Y"
 
-        return self.date.strftime(formatD) + " " +self.time.strftime(formatT)
+        return self.date.strftime(formatD) + " " +self.time.strftime(formatT) + " " + self.location

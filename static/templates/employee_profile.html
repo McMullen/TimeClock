@@ -1,5 +1,5 @@
 <!--
-profile.html
+employee_profile.html
 
 @author Jason McMullen
 -->
@@ -18,17 +18,27 @@ profile.html
 		<p>Phone Number: {{ employee.phone }}</p>
 	</section>
 </div>
-<div class="container">
-    <form method="POST" action="">{% csrf_token %}
-    <input type="submit" value="Punch" class="btn btn-primary">
-</div>
-<div class="container">
-    {% for punch in employee.getAllPunches %}
-        <table>
-            <tr>
-                <td>{{ punch }} </td>
-            </tr>
-        </table>
-    {% endfor %}
+<div class="col-md-4">
+    <div class="container">
+        {% for locations in PunchForm.location %}
+            <div class="mylocations">
+                {{ locations }}
+            </div>
+        {% endfor %}
+        {% if employee.isEvenNumPunches == True %}
+            <a href="{% url 'punch' %}" class="btn btn-success">Punch In</a>
+        {% else %}
+            <a href="{% url 'punch' %}" class="btn btn-success">Punch Out</a>
+        {% endif %}
+    </div>
+    <div class="container">
+        {% for punch in employee.getAllPunches %}
+            <table>
+                <tr>
+                    <td>{{ punch }} </td>
+                </tr>
+            </table>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %} 
