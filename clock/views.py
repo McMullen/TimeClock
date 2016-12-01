@@ -125,7 +125,6 @@ def Profile(request):
     # If user is not logged in, send them to login page
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login/')
-
     user = request.user
     try:
         employee = user.employee
@@ -144,17 +143,20 @@ def PunchRequest(request):
     user = request.user
     employee = user.employee
 
-    form = PunchForm(request.POST)
-    date = datetime.now().date()
-    time = datetime.now().time()
-    
-    #location = 'OF'
-    location = forms.ChoiceField(choices=Punch.LOCATION_CHOICES, widget=forms.RadioSelect())
-    punch = Punch(employee=employee,
-                    date = date,
-                    time = time,
-                    location = location,
-                   )
-    punch.save()
-    context = {'employee': employee}
-    return HttpResponseRedirect('/employee_profile/')
+    if request.method == 'POST':
+        form = PunchForm(request.POST)
+        if form.is_valid():
+            date = datetime.now().date()
+            time = datetime.now().time()
+            location = form.cleaned_data['location']
+            punch = Punch(employee=employee,
+                          date = date,
+                          time = time,
+                          location = location,
+                         )
+            punch.save()
+        return HttpResponseRedirect('/employee_profile/')
+    else:
+        form = PunchForm()
+        context = {'form': form}
+        return render(request, 'punch.html', context)

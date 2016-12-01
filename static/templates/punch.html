@@ -11,7 +11,12 @@ punch.html
 {% block content %}
 <form method="POST" action="">{% csrf_token %}
     <div class="container">
-        <input type="submit" value="Punch In" class="btn btn-primary">
+        {% for locations in form.location %}
+            <div class="myradio">
+                {{ locations }}
+            </div>
+        {% endfor %}
+        <input type="submit" value="Punch" class="btn btn-primary">
     </div>
 </form>
 {% endblock %} 

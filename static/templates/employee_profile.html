@@ -20,11 +20,6 @@ employee_profile.html
 </div>
 <div class="col-md-4">
     <div class="container">
-        {% for locations in PunchForm.location %}
-            <div class="mylocations">
-                {{ locations }}
-            </div>
-        {% endfor %}
         {% if employee.isEvenNumPunches == True %}
             <a href="{% url 'punch' %}" class="btn btn-success">Punch In</a>
         {% else %}

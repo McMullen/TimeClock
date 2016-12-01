@@ -4,13 +4,14 @@ forms.py
 @author Jason McMullen
 """
 
-from clock.models import Employee, Employer, Punch
+from clock.models import *
 from django import forms
 from django.contrib.auth.models import User
 from django.forms import ModelForm
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import RegexValidator
 from datetime import datetime, timedelta, time, date
+from clock.location_choices import *
 
 class RegistrationForm(forms.Form):
 
@@ -58,9 +59,4 @@ Employee punch in form
 """
 class PunchForm(forms.Form):
 
-    date = forms.DateField()
-    time = forms.TimeField()
-    location = forms.ChoiceField(
-        widget=forms.RadioSelect(),
-        choices=Punch.LOCATION_CHOICES,
-    )
+    location = forms.ChoiceField(widget=forms.RadioSelect(), choices=LOCATION_CHOICES)

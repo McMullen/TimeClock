@@ -8,6 +8,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.core.validators import RegexValidator
+from clock.location_choices import *
+
 
 # An extension of the BaseUser class    
 class Employee(models.Model):
@@ -45,16 +47,6 @@ class Employer(models.Model):
 
 # Logic to handle all punch ins/outs. For now, accept all punch requests
 class Punch(models.Model):
-
-    MEDICAL = 'MB'
-    OFFICE = 'OF'
-    TOWN = 'TN'
-
-    LOCATION_CHOICES=(
-        (MEDICAL, 'Medical Building'),
-        (OFFICE, 'Office'),
-        (TOWN, 'Town Houses'),
-    )
 
     employee = models.ForeignKey('Employee')
     date = models.DateField()
