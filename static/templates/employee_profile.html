@@ -11,29 +11,49 @@ employee_profile.html
 {% block content %}
 
 <div class="col-md-4">
-	<!--Display current profile status and information-->
-	<h3>Personal Information</h3>
-	<section>
-		<p>Name: {{ user.first_name }} {{ user.last_name }}</p>
-		<p>Phone Number: {{ employee.phone }}</p>
-	</section>
+    <div class="container">
+        <!--Display current profile status and information-->
+        <h3>Personal Information</h3>
+        <section>
+            <p>Name: {{ user.first_name }} {{ user.last_name }}</p>
+            <p>Phone Number: {{ employee.phone }}</p>
+        </section>
+    </div>
+</div>
+<div class="col-md-4">
+    <form method="POST" action="">{% csrf_token %}
+        <h3></h3>
+        <section>
+            <!-- Location options for punch in -->
+            {% for locations in form.location %}
+                <div class="myradio">
+                    {{ locations }}
+                </div>
+            {% endfor %}
+            
+            <!-- Old link button to send user to the punch page
+            <input type="submit" value="Punch" class="btn btn-primary"> -->
+            
+            {% if employee.isEvenNumPunches == True %}
+                <input type="submit" value="Punch In" class="btn btn-primary">
+            {% else %}
+                <input type="submit" value="Punch Out" class="btn btn-primary">
+            {% endif %}
+        </section>
+    </form>
 </div>
 <div class="col-md-4">
     <div class="container">
-        {% if employee.isEvenNumPunches == True %}
-            <a href="{% url 'punch' %}" class="btn btn-success">Punch In</a>
-        {% else %}
-            <a href="{% url 'punch' %}" class="btn btn-success">Punch Out</a>
-        {% endif %}
-    </div>
-    <div class="container">
-        {% for punch in employee.getAllPunches %}
-            <table>
-                <tr>
-                    <td>{{ punch }} </td>
-                </tr>
-            </table>
-        {% endfor %}
+        <h3>Today's Punches</h3>
+            <section>
+                {% for punch in employee.getTodaysPunches %}
+                    <table>
+                        <tr>
+                            <td>{{ punch }} </td>
+                        </tr>
+                    </table>
+                {% endfor %}
+            </section>
     </div>
 </div>
 {% endblock %} 

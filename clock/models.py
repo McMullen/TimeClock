@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.core.validators import RegexValidator
 from clock.location_choices import *
+from datetime import datetime, timedelta, time, date
 
 
 # An extension of the BaseUser class    
@@ -24,18 +25,24 @@ class Employee(models.Model):
         all_punches = Punch.objects.filter(employee=self)
         return all_punches
         
+    def getTodaysPunches(self):
+        todaysPunches = Punch.objects.filter(date=datetime.now())
+        return todaysPunches
+        
     def numOfPunches(self):
         total = Punch.objects.filter(employee=self).count()
         return total
 
     def isEvenNumPunches(self):
         total = Punch.objects.filter(employee=self).count()
+        result = False
         if total == 0:
-            return True
+            result = True
         elif total % 2 == 0:
-            return True
+            result = True
         else:
-            return False
+            result = False
+        return result
         
 # An extension of the BaseUser class
 class Employer(models.Model):
@@ -52,7 +59,7 @@ class Punch(models.Model):
     date = models.DateField()
     time = models.TimeField()
     location = models.CharField(
-        max_length=2,
+        max_length=50,
         choices=LOCATION_CHOICES,
         default = OFFICE,
     )
@@ -60,9 +67,9 @@ class Punch(models.Model):
     def __str__(self):
 
         # Format for time
-        formatT = "%H:%M:%S"
+        formatT = '%I:%M%p'
 
         # "American" date format
         formatD = "%a %b %d %Y"
 
-        return self.date.strftime(formatD) + " " +self.time.strftime(formatT) + " " + self.location
+        return self.date.strftime(formatD) + " " + self.time.strftime(formatT) + " " + self.location

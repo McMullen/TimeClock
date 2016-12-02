@@ -38,10 +38,11 @@ def Register(request):
         if form.is_valid():
             
             user = User.objects.create_user(username=form.cleaned_data['username'],
-                                                                       email = form.cleaned_data['email'],
-                                                                       password=form.cleaned_data['password'],
-                                                                       first_name=form.cleaned_data['first_name'],
-                                                                       last_name=form.cleaned_data['last_name'])
+                                                email = form.cleaned_data['email'],
+                                                password=form.cleaned_data['password'],
+                                                first_name=form.cleaned_data['first_name'],
+                                                last_name=form.cleaned_data['last_name']
+                                            )
             user.save()
             
             # Save all of the gathered information into a BaseUser object
@@ -125,38 +126,30 @@ def Profile(request):
     # If user is not logged in, send them to login page
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login/')
+        
     user = request.user
+    
     try:
         employee = user.employee
-        context = {'employee': employee}
-        return render(request, 'employee_profile.html', context)
+        if request.method == 'POST':
+            form = PunchForm(request.POST)
+            if form.is_valid():
+                date = datetime.now().date()
+                time = datetime.now().time()
+                location = form.cleaned_data['location']
+                punch = Punch(employee=employee,
+                              date = date,
+                              time = time,
+                              location = location,
+                             )
+                punch.save()
+            return HttpResponseRedirect('/employee_profile/')
+        else:
+            form = PunchForm()		
+            context = {'form': form, 'employee': employee}
+            return render(request, 'employee_profile.html', context)
+            
     except ObjectDoesNotExist:
         employer = user.employer
         context = {'employer' : employer}
         return render(request, 'employer_profile.html', context)
-
-"""
-Handle employees punching in and out
-"""
-@login_required
-def PunchRequest(request):
-    user = request.user
-    employee = user.employee
-
-    if request.method == 'POST':
-        form = PunchForm(request.POST)
-        if form.is_valid():
-            date = datetime.now().date()
-            time = datetime.now().time()
-            location = form.cleaned_data['location']
-            punch = Punch(employee=employee,
-                          date = date,
-                          time = time,
-                          location = location,
-                         )
-            punch.save()
-        return HttpResponseRedirect('/employee_profile/')
-    else:
-        form = PunchForm()
-        context = {'form': form}
-        return render(request, 'punch.html', context)
