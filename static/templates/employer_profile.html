@@ -11,10 +11,20 @@ employer_profile.html
 {% block content %}
 
 <div class="col-md-4">
-	<!--Display current profile status and information-->
-	<h3>Personal Information</h3>
-	<section>
-		<p>Name: {{ user.first_name }} {{ user.last_name }}</p>
-	</section>
+    <div class="container">
+        <!--Display current profile status and information-->
+        <h3>Personal Information</h3>
+        <section>
+            <p>Name: {{ user.first_name }} {{ user.last_name }}</p>
+        </section>
+    </div>
 </div>
-{% endblock %} 
+<div class="col-md-4">
+    <div class="container">
+        <h3>All Employees</h3>
+        {% for employee in user.getAllEmployees %}
+            {{ employee }}
+        {% endfor %}
+    </div>
+<div>
+{% endblock %}

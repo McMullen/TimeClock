@@ -131,6 +131,7 @@ def Profile(request):
     
     try:
         employee = user.employee
+        employee.hoursWorkedToday()
         if request.method == 'POST':
             form = PunchForm(request.POST)
             if form.is_valid():

@@ -26,8 +26,8 @@ class Employee(models.Model):
         return all_punches
         
     def getTodaysPunches(self):
-        todaysPunches = Punch.objects.filter(date=datetime.now())
-        return todaysPunches
+        todays_punches = Punch.objects.filter(employee=self, date=datetime.now())
+        return todays_punches
         
     def numOfPunches(self):
         total = Punch.objects.filter(employee=self).count()
@@ -43,11 +43,47 @@ class Employee(models.Model):
         else:
             result = False
         return result
+    
+    """
+    This will be calculated by finding the total number of seconds the employee has worked and
+    then converting it to hours in decimal form
+    """
+    def hoursWorkedToday(self):
+        punches = list(Punch.objects.filter(date=datetime.now()))
+        total = Punch.objects.filter(employee=self, date=datetime.now()).count()
+        
+        # Need the last check to stop an index out of bounds error when there are no punches
+        # for that day.
+        if total % 3 == 0 and total != 0:
+            del punches[-1]
+
+        start = None
+        end = None
+        total_seconds = 0.0
+        
+        for p in punches:
+            if start == None:
+                start = p.time
+            else:
+                end = p.time
+                total_seconds += abs(end.hour - start.hour) * 60 * 60
+                total_seconds += abs(end.minute - start.minute) * 60
+                total_seconds += abs(end.second - start.second)
+                start = None
+            
+        return (total_seconds / 3600)
+    
+    def __str__(self):
+        return self.user.firstname + " " + self.user.lastname
         
 # An extension of the BaseUser class
 class Employer(models.Model):
     
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    
+    def getAllEmployees(self):
+        all_employees = Employee.objects.all()
+        return all_employees
     
     def __str__(self):
         return "Name: " + self.first_name + " " + self.last_name
