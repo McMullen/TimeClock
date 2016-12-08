@@ -25,15 +25,15 @@ class Employee(models.Model):
     pay_rate = models.FloatField(default=0.00, null=False, blank=True)
     
     def getAllPunches(self):
-        all_punches = Punch.objects.filter(employee=self)
+        all_punches = Punch.objects.filter(employee=self).order_by("-date")
         return all_punches
         
     def getTodaysPunches(self):
-        todays_punches = Punch.objects.filter(employee=self, date=datetime.now())
+        todays_punches = Punch.objects.filter(employee=self, date=datetime.now()).order_by("-date")
         return todays_punches
         
     def getThisWeeksPunches(self):
-        this_weeks_punches = Punch.objects.filter(employee=self, date__range=[datetime.now() - timedelta(days=7), datetime.now()])
+        this_weeks_punches = Punch.objects.filter(employee=self, date__range=[datetime.now() - timedelta(days=7), datetime.now()]).order_by("-date")
         return this_weeks_punches
         
     def numOfPunches(self):
@@ -56,7 +56,7 @@ class Employee(models.Model):
     then converting it to hours in decimal form
     """
     def hoursWorkedToday(self):
-        punches = list(Punch.objects.filter(employee=self, date=datetime.now()))
+        punches = list(Punch.objects.filter(employee=self, date=datetime.now()).order_by("-date"))
         total = Punch.objects.filter(employee=self, date=datetime.now()).count()
         
         # Need the last check to stop an index out of bounds error when there are no punches
@@ -81,7 +81,7 @@ class Employee(models.Model):
         return "%.2f" % (total_seconds / 3600)
         
     def hoursWorkedThisWeek(self):
-        punches = list(Punch.objects.filter(employee=self, date__range=[datetime.now() - timedelta(days=7), datetime.now()]))
+        punches = list(Punch.objects.filter(employee=self, date__range=[datetime.now() - timedelta(days=7), datetime.now()]).order_by("-date"))
         total = len(punches)
         
         # Need the last check to stop an index out of bounds error when there are no punches
