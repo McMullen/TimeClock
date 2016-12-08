@@ -43,14 +43,16 @@ def Register(request):
                                                 first_name=form.cleaned_data['first_name'],
                                                 last_name=form.cleaned_data['last_name']
                                             )
-            user.save()
             
             # Save all of the gathered information into a BaseUser object
             employee = Employee(user=user,
-                              phone=form.cleaned_data['phone'],
-                              pay_rate=10.00,
-                             )
+                                first_name = user.first_name,
+                                last_name = user.last_name,
+                                phone=form.cleaned_data['phone'],
+                                pay_rate=10.00,
+                               )
 
+            user.save()
             employee.save()
 
             # Auto sign in user

@@ -16,8 +16,11 @@ from datetime import datetime, timedelta, time, date
 class Employee(models.Model):
 
     numeric = RegexValidator(r'^[0-9]*$', 'Only numeric characters are allowed.')
+    alpha = RegexValidator(r'^[A-za-z]*$', 'Only alpha characters are allowed.')
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=20, null=False, blank=True, validators=[alpha])
+    last_name = models.CharField(max_length=20, null=False, blank=True, validators=[alpha])
     phone = models.CharField(max_length=10, null=False, blank=True, validators=[numeric])
     pay_rate = models.FloatField(default=0.00, null=False, blank=True)
     
@@ -66,7 +69,7 @@ class Employee(models.Model):
                 start = p.time
             else:
                 end = p.time
-                total_seconds += abs(end.hour - start.hour) * 60 * 60
+                total_seconds += abs(end.hour - start.hour) * 3600
                 total_seconds += abs(end.minute - start.minute) * 60
                 total_seconds += abs(end.second - start.second)
                 start = None
@@ -74,12 +77,14 @@ class Employee(models.Model):
         return (total_seconds / 3600)
     
     def __str__(self):
-        return self.user.firstname + " " + self.user.lastname
+        return self.first_name + " " + self.last_name
         
 # An extension of the BaseUser class
 class Employer(models.Model):
     
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=20, null=False, blank=True)
+    last_name = models.CharField(max_length=20, null=False, blank=True)
     
     def getAllEmployees(self):
         all_employees = Employee.objects.all()
