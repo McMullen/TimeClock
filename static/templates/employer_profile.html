@@ -10,21 +10,36 @@ employer_profile.html
  <!-- Start our code from this section in base.html -->
 {% block content %}
 
-<div class="col-md-4">
-    <div class="container">
+<div class="row">
+    <div class="col-md-4">
         <!--Display current profile status and information-->
         <h3>Personal Information</h3>
         <section>
             <p>Name: {{ employer.first_name }} {{ employer.last_name }}</p>
         </section>
     </div>
-</div>
-<div class="col-md-4">
-    <div class="container">
+    <div class="col-md-4">
         <h3>All Employees</h3>
         {% for employee in employer.getAllEmployees %}
-            {{ employee }}
+            <table>
+                <tr>
+                    {{ employee }}
+                </tr>
+                <td>
+                    {% for punch in employee.getThisWeeksPunches %}
+                        <p>{{ punch }}</p>
+                    {% endfor %}
+                </td>
+            </table>
+            <p>{{ employee.hoursWorkedThisWeek }} hours worked</p>
+            
+            <hr>
+            
         {% endfor %}
     </div>
-<div>
-{% endblock %}
+    <div class="col-md-4">
+        <h3>Add a Punch</h3>
+    </div>
+</div>
+
+{% endblock %} 

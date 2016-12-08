@@ -32,6 +32,10 @@ class Employee(models.Model):
         todays_punches = Punch.objects.filter(employee=self, date=datetime.now())
         return todays_punches
         
+    def getThisWeeksPunches(self):
+        this_weeks_punches = Punch.objects.filter(employee=self, date__range=[datetime.now() - timedelta(days=7), datetime.now()])
+        return this_weeks_punches
+        
     def numOfPunches(self):
         total = Punch.objects.filter(employee=self).count()
         return total
@@ -52,7 +56,7 @@ class Employee(models.Model):
     then converting it to hours in decimal form
     """
     def hoursWorkedToday(self):
-        punches = list(Punch.objects.filter(date=datetime.now()))
+        punches = list(Punch.objects.filter(employee=self, date=datetime.now()))
         total = Punch.objects.filter(employee=self, date=datetime.now()).count()
         
         # Need the last check to stop an index out of bounds error when there are no punches
@@ -74,7 +78,32 @@ class Employee(models.Model):
                 total_seconds += abs(end.second - start.second)
                 start = None
             
-        return (total_seconds / 3600)
+        return "%.2f" % (total_seconds / 3600)
+        
+    def hoursWorkedThisWeek(self):
+        punches = list(Punch.objects.filter(employee=self, date__range=[datetime.now() - timedelta(days=7), datetime.now()]))
+        total = len(punches)
+        
+        # Need the last check to stop an index out of bounds error when there are no punches
+        # for that day.
+        if total % 3 == 0 and total != 0:
+            del punches[-1]
+
+        start = None
+        end = None
+        total_seconds = 0.0
+        
+        for p in punches:
+            if start == None:
+                start = p.time
+            else:
+                end = p.time
+                total_seconds += abs(end.hour - start.hour) * 3600
+                total_seconds += abs(end.minute - start.minute) * 60
+                total_seconds += abs(end.second - start.second)
+                start = None
+            
+        return "%.2f" % (total_seconds / 3600)
     
     def __str__(self):
         return self.first_name + " " + self.last_name
