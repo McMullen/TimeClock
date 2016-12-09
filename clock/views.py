@@ -16,13 +16,13 @@ from clock.models import Employee, Employer, Punch
 from datetime import datetime, time, date
 
 """
-Basic home page view
+@ Basic home page view
 """
 def Home(request):
     return render_to_response("index.html")
 
 """
-Register new users to the time clock system
+@ Register new users to the time clock system
 """
 def Register(request):
 	
@@ -73,7 +73,7 @@ def Register(request):
         return render(request, 'register.html', context)
 
 """
-Handle login requests
+@ Handle login requests
 """
 def LoginRequest(request):
 
@@ -114,26 +114,30 @@ def LoginRequest(request):
         return render(request, 'login.html', context)
         
 """
-Handle logout requests
+@ Handle logout requests
 """
 def LogoutRequest(request):
     logout(request)
     return HttpResponseRedirect('/')
 
 """
-Handle navigation to the profile page after successful login
+@ Handle navigation to the profile page after successful login
 """
 @login_required
 def Profile(request):
+
     # If user is not logged in, send them to login page
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login/')
         
     user = request.user
     
+    # First try if the user is an employee; if so, send them to the employee profile page
     try:
         employee = user.employee
-        employee.hoursWorkedToday()
+        
+        # First time to the page, the browser will send a GET request. Since we want information
+        # for the punch, we need to send a form to get a POST resquest back
         if request.method == 'POST':
             form = PunchForm(request.POST)
             if form.is_valid():
@@ -151,8 +155,14 @@ def Profile(request):
             form = PunchForm()		
             context = {'form': form, 'employee': employee}
             return render(request, 'employee_profile.html', context)
-            
+    
+    # Second, try if user is an employer; if so, send them to the employer profile page
     except ObjectDoesNotExist:
-        employer = user.employer
-        context = {'employer' : employer}
-        return render(request, 'employer_profile.html', context)
+        try:
+            employer = user.employer
+            context = {'employer' : employer}
+            return render(request, 'employer_profile.html', context)
+        
+        # If the user is not an employee or an employer, then the user must be an admin
+        except ObjectDoesNotExist:
+            return HttpResponseRedirect('/admin/')
