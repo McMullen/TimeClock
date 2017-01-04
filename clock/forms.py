@@ -71,3 +71,10 @@ class LoginForm(forms.Form):
 class PunchForm(forms.Form):
 
     location = forms.ChoiceField(widget=forms.RadioSelect(), choices=LOCATION_CHOICES)
+    
+"""
+@ Form for selecting an employee and viewing information about them
+"""
+class EmployeeInfoForm(forms.Form):
+
+    employee = forms.ChoiceField(widget=forms.Select(), choices=Employee.objects.all())

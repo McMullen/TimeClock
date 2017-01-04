@@ -122,7 +122,7 @@ class Employee(models.Model):
         punches = list(Punch.objects.filter(employee=self, date__range=[datetime.now() - timedelta(days=7), 
                                             datetime.now()]).order_by("-date"))
         total = len(punches)
-        
+
         # Need the last check to stop an index out of bounds error when there are no punches
         # for that day.
         if total % 3 == 0 and total != 0:
@@ -130,16 +130,21 @@ class Employee(models.Model):
 
         start = None
         end = None
+        start_date = None
+        end_date = None
         total_seconds = 0.0
         
         for p in punches:
             if start == None:
                 start = p.time
+                start_date = p.date
             else:
                 end = p.time
+                end_date = p.date
                 total_seconds += abs(end.hour - start.hour) * 3600
                 total_seconds += abs(end.minute - start.minute) * 60
                 total_seconds += abs(end.second - start.second)
+                total_seconds += abs(end_date - start_date).days * 86400
                 start = None
             
         return "%.2f" % (total_seconds / 3600)

@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import render_to_response
 from django.core.exceptions import ObjectDoesNotExist
-from clock.forms import RegistrationForm, LoginForm, PunchForm
+from clock.forms import RegistrationForm, LoginForm, PunchForm, EmployeeInfoForm
 from clock.models import Employee, Employer, Punch
 from datetime import datetime, time, date
 
@@ -160,9 +160,35 @@ def Profile(request):
     except ObjectDoesNotExist:
         try:
             employer = user.employer
-            context = {'employer' : employer}
-            return render(request, 'employer_profile.html', context)
+            
+            if request.method == 'POST':
+                context = {'employer' : employer}
+                return render(request, 'employer_profile.html', context)
+        
+            else:
+                form = EmployeeInfoForm()
+                context = {'form': form, 'employer': employer}
+                return render(request, 'employer_profile.html', context)
         
         # If the user is not an employee or an employer, then the user must be an admin
         except ObjectDoesNotExist:
             return HttpResponseRedirect('/admin/')
+            
+"""
+@ Handle navigation to the page that will show specific information about the employee to the employer
+"""
+def EmployeeInfo(request):
+    
+    # If user is not logged in, send them to login page
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
+    
+    user = request.user
+    
+    try:
+        employer = user.employer
+    
+        context = {'employer': employer}
+        return render(request, 'employee_info.html', context)
+    except ObjectDoesNotExist:
+        return HttpResponseRedirect('/')
