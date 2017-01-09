@@ -46,14 +46,14 @@ employee_profile.html
 			{% for punch in employee.getTodaysPunches %}
 				<table>
 					<tr>
-						<td>{{ punch }} </td>
+						<td><pre>{{ punch }}</pre></td>
 					</tr>
 				</table>
 			{% endfor %}
             
             <br>
             
-            <p>Hours worked: {{ employee.hoursWorkedToday }}</p>
+            <p>Hours worked: <b>{{ employee.hoursWorkedToday }}</b></p>
 		</section>
 	</div>
 </div>
@@ -69,7 +69,7 @@ employee_profile.html
         {% for punch in employee.getAllPunches %}
             <table>
                 <tr>
-                    <td>{{ punch }}</td>
+                    <td><pre>{{ punch }}</pre></td>
                 </tr>
             </table>
         {% endfor %}

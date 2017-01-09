@@ -20,15 +20,15 @@ employer_profile.html
         {% for employee in employer.getAllEmployees %}
             <table>
                 <tr>
-                    {{ employee }}
+                    <b>{{ employee }}</b>
                 </tr>
                 <td>
                     {% for punch in employee.getThisWeeksPunches %}
-                        <p>{{ punch }}</p>
+                        <pre>{{ punch }}</pre>
                     {% endfor %}
                 </td>
             </table>
-            <p>{{ employee.hoursWorkedThisWeek }} hours worked</p>
+            <p><b>{{ employee.hoursWorkedThisWeek }}</b> hours worked</p>
             
             <hr>
             
