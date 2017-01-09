@@ -67,10 +67,21 @@ class LoginForm(forms.Form):
 
 """
 @ Employee punch in form
+@
+@ This form will ask the employee for the location that they will begin working at
 """
-class PunchForm(forms.Form):
+class PunchInForm(forms.Form):
 
-    location = forms.ChoiceField(widget=forms.RadioSelect(), choices=LOCATION_CHOICES)
+    location = forms.ChoiceField(widget=forms.RadioSelect(), choices=LOCATION_CHOICES, required = True,)
+    
+"""
+@ Employee punch out form
+@
+@ This form will NOT ask the employee for their location and instead will record an Out
+"""
+class PunchOutForm(forms.Form):
+
+    location = "Out"
     
 """
 @ Form for selecting an employee and viewing information about them

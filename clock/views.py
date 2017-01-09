@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import render_to_response
 from django.core.exceptions import ObjectDoesNotExist
-from clock.forms import RegistrationForm, LoginForm, PunchForm, EmployeeInfoForm
+from clock.forms import RegistrationForm, LoginForm, PunchInForm, PunchOutForm, EmployeeInfoForm
 from clock.models import Employee, Employer, Punch
 from datetime import datetime, time, date
 
@@ -139,22 +139,28 @@ def Profile(request):
         # First time to the page, the browser will send a GET request. Since we want information
         # for the punch, we need to send a form to get a POST resquest back
         if request.method == 'POST':
-            form = PunchForm(request.POST)
-            if form.is_valid():
-                date = datetime.now().date()
-                time = datetime.now().time()
-                location = form.cleaned_data['location']
-                punch = Punch(employee=employee,
-                              date = date,
-                              time = time,
-                              location = location,
-                             )
-                punch.save()
+            if employee.isEvenNumPunches():
+                form = PunchInForm(request.POST)
+                if form.is_valid():
+                    location = form.cleaned_data['location']
+                    ProfileHelper(location, employee)
+            else:
+                form = PunchOutForm(request.POST)
+                if form.is_valid():
+                    location = "Out"
+                    ProfileHelper(location, employee)
+            
             return HttpResponseRedirect('/employee_profile/')
         else:
-            form = PunchForm()		
-            context = {'form': form, 'employee': employee}
-            return render(request, 'employee_profile.html', context)
+            if employee.isEvenNumPunches():
+                form = PunchInForm()		
+                context = {'form': form, 'employee': employee}
+                return render(request, 'employee_profile.html', context)
+            else:
+                form = PunchOutForm()		
+                context = {'form': form, 'employee': employee}
+                return render(request, 'employee_profile.html', context)
+
     
     # Second, try if user is an employer; if so, send them to the employer profile page
     except ObjectDoesNotExist:
@@ -173,6 +179,22 @@ def Profile(request):
         # If the user is not an employee or an employer, then the user must be an admin
         except ObjectDoesNotExist:
             return HttpResponseRedirect('/admin/')
+            
+"""
+@ Helper method for Profile
+@ param punch_location - the location the employee will be punching in/out from
+@ param employee - the employee the punch will be saved to
+"""
+def ProfileHelper(punch_location, employee):
+    date = datetime.now().date()
+    time = datetime.now().time()
+    location = punch_location
+    punch = Punch(employee=employee,
+                  date = date,
+                  time = time,
+                  location = location,
+                 )
+    punch.save()
             
 """
 @ Handle navigation to the page that will show specific information about the employee to the employer

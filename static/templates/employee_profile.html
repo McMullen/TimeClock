@@ -24,15 +24,14 @@ employee_profile.html
 		<form method="POST" action="">{% csrf_token %}
 			<h3></h3>
 			<section>
-				<!-- Location options for punch in -->
-				{% for locations in form.location %}
-					<div class="myradio">
-						{{ locations }}
-					</div>
-				{% endfor %}
-				
                 <!-- Logic to determine if a punch in or a punch out needs to be displayed -->
 				{% if employee.isEvenNumPunches == True %}
+                    <!-- Location options for punch in -->
+                    {% for locations in form.location %}
+                        <div class="myradio">
+                            {{ locations }}
+                        </div>
+                    {% endfor %}
 					<input type="submit" value="Punch In" class="btn btn-primary">
 				{% else %}
 					<input type="submit" value="Punch Out" class="btn btn-primary">

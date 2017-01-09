@@ -30,7 +30,7 @@ class Employee(models.Model):
     """
     @ Method to return all punches for this employee
     @
-    @return all of the punches for this employee
+    @ return all of the punches for this employee
     """
     def getAllPunches(self):
         all_punches = Punch.objects.filter(employee=self).order_by("-date")
@@ -39,7 +39,7 @@ class Employee(models.Model):
     """
     @ Method to return all punches created today for this employee
     @
-    @return all of todays punches for this employee
+    @ return all of todays punches for this employee
     """
     def getTodaysPunches(self):
         todays_punches = Punch.objects.filter(employee=self, date=datetime.now()).order_by("-date")
@@ -48,7 +48,7 @@ class Employee(models.Model):
     """
     @ Method to return all punches created this week for this employee
     @
-    @return all punches from this week for this employee
+    @ return all punches from this week for this employee
     """
     def getThisWeeksPunches(self):
         this_weeks_punches = Punch.objects.filter(employee=self, date__range=[datetime.now() - timedelta(days=7),
@@ -58,7 +58,7 @@ class Employee(models.Model):
     """
     @ Method to create the total number of punches for this employee
     @
-    @return the total number of punches for this employee
+    @ return the total number of punches for this employee
     """
     def numOfPunches(self):
         total = Punch.objects.filter(employee=self).count()
@@ -67,7 +67,7 @@ class Employee(models.Model):
     """
     @ Method that returns True if there is an even number of punches created for this employee, False otherwise.
     @
-    @return True if an even number of punches has been created for this employee, False otherwise
+    @ return True if an even number of punches has been created for this employee, False otherwise
     """
     def isEvenNumPunches(self):
         total = Punch.objects.filter(employee=self).count()
@@ -84,7 +84,7 @@ class Employee(models.Model):
     @ This will be calculated by finding the total number of seconds the employee has worked and
     @ then converting it to hours in decimal form.
     @
-    @return the total number of hours this employee has worked today
+    @ return the total number of hours this employee has worked today
     """
     def hoursWorkedToday(self):
         punches = list(Punch.objects.filter(employee=self, date=datetime.now()).order_by("-date"))
@@ -114,9 +114,9 @@ class Employee(models.Model):
         return "%.2f" % (total_seconds / 3600)
     
     """
-    @Method that will calculate the total number of hours an employee has worked for this week.
+    @ Method that will calculate the total number of hours an employee has worked for this week.
     @
-    @return the total number of hours this employee has worked this week
+    @ return the total number of hours this employee has worked this week
     """
     def hoursWorkedThisWeek(self):
         punches = list(Punch.objects.filter(employee=self, date__range=[datetime.now() - timedelta(days=7), 
@@ -152,7 +152,7 @@ class Employee(models.Model):
     """
     @ String representation of an instance of this class
     @
-    @return a string representation of an employee
+    @ return a string representation of an employee
     """
     def __str__(self):
         return self.first_name + " " + self.last_name
@@ -170,7 +170,7 @@ class Employer(models.Model):
     """
     @ Method to return all employee objects from the DB
     @
-    @return a QuerySet containing all employee instances
+    @ return a QuerySet containing all employee instances
     """
     def getAllEmployees(self):
         all_employees = Employee.objects.all()
@@ -201,7 +201,7 @@ class Punch(models.Model):
     """
     @ Method that creates a string representation of a punch.
     @
-    @return a string representation of a punch.
+    @ return a string representation of a punch.
     """
     def __str__(self):
 
