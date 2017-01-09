@@ -27,6 +27,10 @@ class Employee(models.Model):
     phone = models.CharField(max_length=10, null=False, blank=True, validators=[numeric])
     pay_rate = models.FloatField(default=0.00, null=False, blank=True)
     
+    # Variables used only when an Employer wants to search for specific range of days for punches
+    start_date = models.DateField(null = True, blank=False)
+    end_date = models.DateField(null = True, blank=False)
+    
     """
     @ Method to return all punches for this employee
     @
@@ -54,7 +58,19 @@ class Employee(models.Model):
         this_weeks_punches = Punch.objects.filter(employee=self, date__range=[datetime.now() - timedelta(days=7),
                                                   datetime.now()]).order_by("-date")
         return this_weeks_punches
-       
+
+    """
+    @ Method to return a custom date range of punches
+    @
+    @ return all punches within the given date parameters
+    """
+    def getCustomDatePunches(self):
+        if self.start_date == None:
+            self.start_date = datetime.now()
+            self.end_date = datetime.now()
+        custom_punches = Punch.objects.filter(employee=self, date__range=(self.start_date, self.end_date)).order_by("-date")
+        return custom_punches
+    
     """
     @ Method to create the total number of punches for this employee
     @
@@ -147,6 +163,45 @@ class Employee(models.Model):
                 total_seconds += abs(end_date - start_date).days * 86400
                 start = None
             
+        return "%.2f" % (total_seconds / 3600)
+    
+    """
+    @ Method that will calculate the total number of hours an employee has worked during the
+    @ specified date range
+    @
+    @ return the total number of hours this employee has worked during this date range
+    """
+    def getCustomDateHours(self):
+        if self.start_date == None:
+            self.start_date = datetime.now()
+            self.end_date = datetime.now()
+        punches = Punch.objects.filter(employee=self, date__range=(self.start_date, self.end_date)).order_by("-date")
+        total = len(punches)
+    
+        # Need the last check to stop an index out of bounds error when there are no punches
+        # for that day.
+        if total % 3 == 0 and total != 0:
+            del punches[-1]
+
+        start = None
+        end = None
+        start_date = None
+        end_date = None
+        total_seconds = 0.0
+        
+        for p in punches:
+            if start == None:
+                start = p.time
+                start_date = p.date
+            else:
+                end = p.time
+                end_date = p.date
+                total_seconds += abs(end.hour - start.hour) * 3600
+                total_seconds += abs(end.minute - start.minute) * 60
+                total_seconds += abs(end.second - start.second)
+                total_seconds += abs(end_date - start_date).days * 86400
+                start = None
+    
         return "%.2f" % (total_seconds / 3600)
     
     """

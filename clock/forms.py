@@ -12,6 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import RegexValidator
 from datetime import datetime, timedelta, time, date
 from clock.location_choices import *
+from datetimewidget.widgets import DateTimeWidget
 
 
 """
@@ -88,4 +89,21 @@ class PunchOutForm(forms.Form):
 """
 class EmployeeInfoForm(forms.Form):
 
-    employee = forms.ChoiceField(widget=forms.Select(), choices=Employee.objects.all())
+    class Meta:
+        model = Employee
+        widgets = {
+            'datetime': DateTimeWidget()
+        }
+
+    dateTimeOptions = {
+       'format': 'mm/dd/yyyy',
+        'autoclose': 'true',
+        'todayBtn': 'true',
+        'todayHighlight': 'true',
+        'minView': '2',
+        'maxView': '2', 
+    }
+        
+    start_date = forms.DateField(widget=DateTimeWidget(options = dateTimeOptions))
+    end_date = forms.DateField(widget=DateTimeWidget(options = dateTimeOptions))
+    

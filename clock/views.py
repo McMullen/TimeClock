@@ -168,7 +168,17 @@ def Profile(request):
             employer = user.employer
             
             if request.method == 'POST':
-                context = {'employer' : employer}
+                form = EmployeeInfoForm(request.POST)
+                if form.is_valid():
+                    start = form.cleaned_data['start_date']
+                    end = form.cleaned_data['end_date']
+                    
+                    for emp in employer.getAllEmployees():
+                        emp.start_date = start
+                        emp.end_date = end
+                        emp.save()
+                    
+                context = {'employer' : employer, 'form': form}
                 return render(request, 'employer_profile.html', context)
         
             else:
@@ -196,21 +206,3 @@ def ProfileHelper(punch_location, employee):
                  )
     punch.save()
             
-"""
-@ Handle navigation to the page that will show specific information about the employee to the employer
-"""
-def EmployeeInfo(request):
-    
-    # If user is not logged in, send them to login page
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login/')
-    
-    user = request.user
-    
-    try:
-        employer = user.employer
-    
-        context = {'employer': employer}
-        return render(request, 'employee_info.html', context)
-    except ObjectDoesNotExist:
-        return HttpResponseRedirect('/')

@@ -15,30 +15,61 @@ employer_profile.html
         <!-- Create a small space to "indent" the list of all employees -->
     </div>
     
-    <div class="col-md-4">
-        <h3>All Employees</h3>
-        {% for employee in employer.getAllEmployees %}
+    <div class="col-md-3">
+        <h3>Hours From A Week Ago</h3>
+        <section>
+            {% for employee in employer.getAllEmployees %}
+                <table>
+                    <tr>
+                        <b>{{ employee }}</b>
+                    </tr>
+                    <td>
+                        {% for punch in employee.getThisWeeksPunches %}
+                            <pre>{{ punch }}</pre>
+                        {% endfor %}
+                    </td>
+                </table>
+                <p><b>{{ employee.hoursWorkedThisWeek }}</b> hours worked</p>
+                
+                <hr>
+                
+            {% endfor %}
+        </section>
+    </div>
+    
+    <div class="col-md-3">
+        <form method="POST" action="">{% csrf_token %}
+            <h3>Select Start/End Dates</h3>
+            <section>
+                <label for="id_start_date">Start Date: </label>{{ form.start_date }}
+                <label for="id_end_date">End Date: </label>{{ form.end_date }}
+                <input type="submit" value="Select" class="btn btn-primary">
+            </section>
+        </form>
+    </div>
+        
+    <div class="col-md-3">
+        <h3></h3>
+        <section>
+            {% for employee in employer.getAllEmployees %}
             <table>
                 <tr>
                     <b>{{ employee }}</b>
                 </tr>
                 <td>
-                    {% for punch in employee.getThisWeeksPunches %}
+                    {% for punch in employee.getCustomDatePunches %}
                         <pre>{{ punch }}</pre>
                     {% endfor %}
                 </td>
             </table>
-            <p><b>{{ employee.hoursWorkedThisWeek }}</b> hours worked</p>
+            <p><b>{{ employee.getCustomDateHours }}</b> hours worked</p>
             
             <hr>
             
-        {% endfor %}
+            {% endfor %}
+        </section>
     </div>
-    
-    <div class="col-md-4">
-        <h3>Add a Punch</h3>
-        
-    </div>
+
 </div>
 
 {% endblock %} 
