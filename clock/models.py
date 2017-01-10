@@ -175,7 +175,7 @@ class Employee(models.Model):
         if self.start_date == None:
             self.start_date = datetime.now()
             self.end_date = datetime.now()
-        punches = Punch.objects.filter(employee=self, date__range=(self.start_date, self.end_date)).order_by("-date")
+        punches = list(Punch.objects.filter(employee=self, date__range=(self.start_date, self.end_date)).order_by("-date"))
         total = len(punches)
     
         # Need the last check to stop an index out of bounds error when there are no punches
